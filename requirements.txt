@@ -4,11 +4,11 @@ gunicorn
 
 # Data processing
 pandas
-numpy==1.26.4
+numpy==1.23.5
 
 # Machine Learning
-scikit-learn==1.6.1   # Must match training version
-joblib==1.4.2
+scikit-learn==1.2.2   # Must match training version
+joblib==1.2.0
 xgboost==2.1.1
 lightgbm==4.3.0
 
