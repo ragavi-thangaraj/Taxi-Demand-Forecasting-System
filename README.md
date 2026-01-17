@@ -229,138 +229,6 @@ FLASK_DEBUG=True
 MODEL_PATH=taxi_demand_model.pkl
 ```
 
-## Usage
-
-### Starting the API Server
-
-#### Development Mode
-```bash
-python app.py
-```
-The API will be available at `http://localhost:5000`
-
-#### Production Mode
-```bash
-gunicorn -w 4 -b 0.0.0.0:8000 app:app
-```
-The API will be available at `http://localhost:8000`
-
-### Making Predictions
-
-#### Using curl
-```bash
-curl -X POST http://localhost:5000/predict \
-  -H "Content-Type: application/json" \
-  -d '{
-    "features": {
-      "hour": 14,
-      "day_of_week": 1,
-      "month": 6,
-      "temperature": 25.5,
-      "humidity": 65,
-      "precipitation": 0,
-      "wind_speed": 10.2,
-      "pickup_latitude": 40.7589,
-      "pickup_longitude": -73.9851
-    }
-  }'
-```
-
-#### Using Python
-```python
-import requests
-import json
-
-url = "http://localhost:5000/predict"
-data = {
-    "features": {
-        "hour": 14,
-        "day_of_week": 1,
-        "month": 6,
-        "temperature": 25.5,
-        "humidity": 65,
-        "precipitation": 0,
-        "wind_speed": 10.2,
-        "pickup_latitude": 40.7589,
-        "pickup_longitude": -73.9851
-    }
-}
-
-response = requests.post(url, json=data)
-prediction = response.json()
-print(f"Predicted demand: {prediction['prediction']}")
-```
-
-#### Using JavaScript
-```javascript
-const apiUrl = 'http://localhost:5000/predict';
-const data = {
-  features: {
-    hour: 14,
-    day_of_week: 1,
-    month: 6,
-    temperature: 25.5,
-    humidity: 65,
-    precipitation: 0,
-    wind_speed: 10.2,
-    pickup_latitude: 40.7589,
-    pickup_longitude: -73.9851
-  }
-};
-
-fetch(apiUrl, {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify(data)
-})
-.then(response => response.json())
-.then(result => console.log('Predicted demand:', result.prediction));
-```
-
-## API Documentation
-
-### Endpoints
-
-#### GET /
-- **Description**: Health check endpoint
-- **Response**: Status message
-- **Status Code**: 200
-- **Example Response**: `"Taxi Demand Forecasting API is running!"`
-
-#### POST /predict
-- **Description**: Get taxi demand prediction
-- **Content-Type**: `application/json`
-- **Request Body**:
-  ```json
-  {
-    "features": {
-      "hour": 14,
-      "day_of_week": 1,
-      "month": 6,
-      "temperature": 25.5,
-      "humidity": 65,
-      "precipitation": 0,
-      "wind_speed": 10.2,
-      "pickup_latitude": 40.7589,
-      "pickup_longitude": -73.9851
-    }
-  }
-  ```
-- **Success Response** (200):
-  ```json
-  {
-    "prediction": 15.7
-  }
-  ```
-- **Error Response** (500):
-  ```json
-  {
-    "error": "Model not loaded"
-  }
-  ```
-
 ### Feature Specifications
 
 | Feature | Type | Description | Range/Format | Required |
@@ -516,73 +384,6 @@ docker build -t taxi-demand-api .
 docker run -p 5000:5000 taxi-demand-api
 ```
 
-#### Cloud Deployment Options
-- **Heroku**: Use `runtime.txt` and `requirements.txt` for automatic deployment
-- **AWS EC2**: Deploy using gunicorn with nginx reverse proxy
-- **Google Cloud Run**: Containerized deployment with automatic scaling
-- **Azure App Service**: Direct Python application deployment
-
-### Environment Variables
-For production deployment, set these environment variables:
-```bash
-FLASK_ENV=production
-MODEL_PATH=taxi_demand_model.pkl
-PORT=5000
-WORKERS=4
-```
-
-## Testing
-
-### Unit Tests
-Create test files for API endpoints:
-```python
-import unittest
-import json
-from app import app
-
-class TestTaxiDemandAPI(unittest.TestCase):
-    def setUp(self):
-        self.app = app.test_client()
-        self.app.testing = True
-
-    def test_health_check(self):
-        response = self.app.get('/')
-        self.assertEqual(response.status_code, 200)
-
-    def test_prediction_endpoint(self):
-        data = {
-            "features": {
-                "hour": 14,
-                "day_of_week": 1,
-                "month": 6,
-                "temperature": 25.5,
-                "humidity": 65,
-                "precipitation": 0,
-                "wind_speed": 10.2,
-                "pickup_latitude": 40.7589,
-                "pickup_longitude": -73.9851
-            }
-        }
-        response = self.app.post('/predict', 
-                               data=json.dumps(data),
-                               content_type='application/json')
-        self.assertEqual(response.status_code, 200)
-        self.assertIn('prediction', json.loads(response.data))
-
-if __name__ == '__main__':
-    unittest.main()
-```
-
-### Integration Tests
-Test the complete pipeline from data input to prediction output:
-```bash
-# Run all tests
-python -m pytest tests/
-
-# Run with coverage
-python -m pytest tests/ --cov=app
-```
-
 ## Performance Optimization
 
 ### Model Optimization
@@ -595,25 +396,6 @@ python -m pytest tests/ --cov=app
 - **Load Balancing**: Use multiple worker processes for concurrent requests
 - **Response Compression**: Enable gzip compression for API responses
 
-### Monitoring and Logging
-```python
-import logging
-from flask import Flask
-
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-# Add request logging
-@app.before_request
-def log_request_info():
-    logger.info('Request: %s %s', request.method, request.url)
-
-@app.after_request
-def log_response_info(response):
-    logger.info('Response: %s', response.status_code)
-    return response
-```
 
 ## Contributing
 
@@ -626,13 +408,6 @@ def log_response_info(response):
 6. Commit your changes: `git commit -m 'Add amazing feature'`
 7. Push to the branch: `git push origin feature/amazing-feature`
 8. Open a Pull Request
-
-### Code Standards
-- Follow PEP 8 style guidelines
-- Add comprehensive docstrings to all functions and classes
-- Include type hints for function parameters and return values
-- Write unit tests for new features
-- Update documentation for API changes
 
 ### Pull Request Process
 1. Ensure all tests pass
@@ -667,10 +442,6 @@ Solution: Ensure the Flask server is running and the port is not blocked.
 - **High Memory Usage**: Monitor memory consumption and optimize feature processing
 - **API Timeouts**: Increase timeout settings in production deployment
 
-## License
-
-This project is licensed under the MIT License. See the LICENSE file for details.
-
 ## Acknowledgments
 
 - ZoZo Taxi Dataset for providing comprehensive ride data
@@ -680,5 +451,3 @@ This project is licensed under the MIT License. See the LICENSE file for details
 - The machine learning community for algorithm development and best practices
 
 ---
-
-**Note**: This system is designed for educational and research purposes. For production use, ensure proper data privacy compliance and system security measures.
