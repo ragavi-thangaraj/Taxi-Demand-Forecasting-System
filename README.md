@@ -198,8 +198,8 @@ Top contributing features to model predictions:
 
 ### Step 1: Clone the Repository
 ```bash
-git clone <repository-url>
-cd taxi-demand-forecasting
+git clone https://github.com/ragavi-thangaraj/Taxi-Demand-Forecasting-System.git
+cd Taxi-Demand-Forecasting-System
 ```
 
 ### Step 2: Create Virtual Environment
